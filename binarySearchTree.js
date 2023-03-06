@@ -12,27 +12,60 @@ class BinarySearchTree {
   }
 
   sortedTree(data) {
-    const sortedTree = [...new Set(data)].sort((a, b) => a - b);
-    return sortedTree;
+    return [...new Set(data)].sort((a, b) => a - b);
+  }
+
+  buildSubtree(sortedTree, start, end) {
+    if (start > end) {
+      return null;
+    }
+
+    const mid = Math.floor((start + end) / 2);
+    const node = new Node(sortedTree[mid]);
+
+    node.left = this.buildSubtree(sortedTree, start, mid - 1);
+    node.right = this.buildSubtree(sortedTree, mid + 1, end);
+
+    this.root = node;
+    return node;
   }
 
   buildTree(data) {
     const sortedTree = this.sortedTree(data);
 
-    const buildSubtree = (sortedTree, start, end) => {
-      if (start > end) {
-        return null;
-      }
-      const mid = Math.floor((start + end) / 2);
-      const node = new Node(sortedTree[mid]);
+    return this.buildSubtree(sortedTree, 0, sortedTree.length - 1);
+  }
 
-      node.left = buildSubtree(sortedTree, start, mid - 1);
-      node.right = buildSubtree(sortedTree, mid + 1, end);
-
+  insert(data) {
+    const node = new Node(data);
+    if (!this.root) {
       this.root = node;
-      return node;
-    };
-    return buildSubtree(sortedTree, 0, sortedTree.length - 1);
+      return;
+    }
+
+    let current = this.root;
+
+    while (true) {
+      if (data === current.data) {
+        return undefined;
+      }
+
+      if (data < current.data) {
+        if (!current.left) {
+          current.left = node;
+          return this;
+        }
+
+        current = current.left;
+      } else {
+        if (!current.right) {
+          current.right = node;
+          return this;
+        }
+
+        current = current.right;
+      }
+    }
   }
 
   prettyPrint() {
