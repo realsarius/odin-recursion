@@ -24,6 +24,7 @@ class LinkedList {
       this.head = node;
     } else {
       current = this.head;
+
       while (current.next) {
         current = current.next;
       }
@@ -32,8 +33,9 @@ class LinkedList {
     this.size += 1;
   }
 
-  getSize() {
-    return this.size;
+  clearList() {
+    this.head = null;
+    this.size = 0;
   }
 
   getHead() {
@@ -42,22 +44,25 @@ class LinkedList {
 
   getTail() {
     let current;
-
+    if (!this.head) {
+      return null;
+    }
     if (!this.head.next) {
       return this.head;
-    } else {
-      current = this.head;
-      while (current.next) {
-        current = current.next;
-      }
-      return current.data;
     }
+    current = this.head;
+    while (current.next) {
+      current = current.next;
+    }
+    return current.data;
   }
 
   getAt(index) {
     let current = this.head;
     let count = 0;
-
+    if (!this.head) {
+      return null;
+    }
     while (current) {
       if (count === index) {
         return current.data;
@@ -65,16 +70,12 @@ class LinkedList {
       current = current.next;
       count += 1;
     }
-    return 'Nothing found';
-  }
-
-  clearList() {
-    this.head = null;
-    this.size = 0;
+    return null;
   }
 
   printListData() {
     let current = this.head;
+
     while (current) {
       console.log(current.data);
       current = current.next;
@@ -86,49 +87,22 @@ class LinkedList {
       return null;
     }
     if (!this.head.next) {
-      const node = this.head;
+      let current = this.head;
       this.head = null;
-      this.size -= 1;
+      this.size = 0;
+      return current.data;
     }
-    let current = this.head.next;
     let previous = this.head;
+    let current = this.head.next;
+
     while (current.next) {
       previous = current;
       current = current.next;
     }
     previous.next = null;
-
     this.size -= 1;
+
     return current.data;
-  }
-
-  contains(value) {
-    if (!this.head) {
-      return null;
-    }
-    let current = this.head;
-    while (current) {
-      if (current.data === value) {
-        return true;
-      }
-      current = current.next;
-    }
-    return false;
-  }
-
-  find(value) {
-    if (!this.head) {
-      return null;
-    }
-    let count = 0;
-    let current = this.head;
-    while (current) {
-      if (current.data === value) {
-        return count;
-      }
-      count += 1;
-      current = current.next;
-    }
   }
 
   toString() {
@@ -143,6 +117,60 @@ class LinkedList {
     }
     string += 'null';
     return string;
+  }
+
+  insertAt(data, index) {
+    if (index > 0 && index > this.size) {
+      return;
+    }
+
+    if (index === 0) {
+      this.prepend(data);
+      return;
+    }
+
+    const node = new Node(data);
+    let current, previous;
+
+    current = this.head;
+    let count = 0;
+
+    while (count < index) {
+      previous = current;
+      current = current.next;
+      count += 1;
+    }
+
+    node.next = current;
+    previous.next = node;
+
+    this.size += 1;
+  }
+
+  removeAt(index) {
+    if (index > 0 && index > this.size) {
+      return;
+    }
+
+    let current = this.head;
+    let previous;
+    let count = 0;
+
+    if (index === 0) {
+      this.head = current.next;
+    } else {
+      while (count < index) {
+        count += 1;
+        previous = current;
+        current = current.next;
+      }
+      previous.next = current.next;
+    }
+    this.size -= 1;
+  }
+
+  getSize() {
+    return this.size;
   }
 }
 
@@ -163,5 +191,8 @@ console.log(`Tail: ${linkedList.getTail()}`);
 // console.log(`Find at: ${linkedList.find(2)}`);
 // console.log(`Pop: ${linkedList.pop()}`);
 
-linkedList.printListData();
+linkedList.insertAt(5, 2);
+// linkedList.removeAt(5);
+
+// linkedList.printListData();
 console.log(linkedList.toString());
