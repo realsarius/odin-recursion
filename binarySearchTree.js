@@ -67,6 +67,86 @@ class BinarySearchTree {
     }
   }
 
+  remove(data) {
+    const removeNode = function (node, data) {
+      if (!node) {
+        return null;
+      }
+
+      if (data === node.data) {
+        if (node.left && node.right) {
+          return null;
+        }
+
+        if (!node.left) {
+          return node.right;
+        }
+
+        if (!node.right) {
+          return node.left;
+        }
+
+        var tempNode = node.right;
+        while (!tempNode.left) {
+          tempNode = tempNode.left;
+        }
+
+        node.data = tempNode.data;
+        node.right = removeNode(node.right, tempNode.data);
+        return node;
+      } else if (data < node.data) {
+        node.left = removeNode(node.left, data);
+        return node;
+      } else {
+        node.right = removeNode(node.right, data);
+        return node;
+      }
+    };
+    this.root = removeNode(this.root, data);
+  }
+
+  height() {
+    const height = (node) => {
+      if (!node) {
+        return 0;
+      }
+      const leftHeight = height(node.left);
+      const rightHeight = height(node.right);
+
+      if (
+        Math.abs(leftHeight - rightHeight) > 1 ||
+        leftHeight === -1 ||
+        rightHeight === -1
+      ) {
+        return -1;
+      } else {
+        return Math.max(leftHeight, rightHeight) + 1;
+      }
+    };
+    return height(this.root) !== -1;
+  }
+
+  isBalanced() {
+    const balanced = (node) => {
+      if (!node) {
+        return 0;
+      }
+      const leftHeight = height(node.left);
+      const rightHeight = height(node.right);
+
+      if (
+        Math.abs(leftHeight - rightHeight) > 1 ||
+        leftHeight === -1 ||
+        rightHeight === -1
+      ) {
+        return -1;
+      } else {
+        return Math.max(leftHeight, rightHeight) + 1;
+      }
+    };
+    return balanced(this.root) !== -1;
+  }
+
   find(data) {
     if (!this.root) {
       return null;
@@ -184,14 +264,17 @@ tree.insert(0);
 tree.insert(6);
 tree.insert(6);
 tree.insert(6);
+
 console.log(`Finds: ${tree.find(100)}`);
 
 console.log(`Level Order: ${tree.levelOrder()}`);
 console.log(`Preorder: ${tree.preOrder()}`);
 console.log(`Inorder: ${tree.inOrder()}`);
 console.log(`Postorder: ${tree.postOrder()}`);
+console.log(`Is Balanced: ${tree.isBalanced()}`);
 // console.log(`Preorder: ${tree.preOrder((data) => console.log(data))}`);
 // console.log(`Inorder: ${tree.inOrder((data) => console.log(data))}`);
 // console.log(`Postorder: ${tree.postOrder((data) => console.log(data))}`);
+tree.remove(6);
 
 tree.prettyPrint();
